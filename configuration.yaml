@@ -1,0 +1,270 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: 
+  longitude: 
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 100
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Rome
+  # Customization file
+  customize: !include customize.yaml
+
+# Show links to resources in log and frontend
+#introduction:
+
+# Enables the frontend
+frontend:
+
+# Enables configuration UI
+config:
+
+http:
+  # Secrets are defined in the file secrets.yaml
+  api_password: 
+  # Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+  # base_url: example.duckdns.org:8123
+
+# Checks for available updates
+# Note: This component will send some information about your system to
+# the developers to assist with development of Home Assistant.
+# For more information, please see:
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+updater:
+  # Optional, allows Home Assistant developers to focus on popular components.
+  # include_used_components: true
+
+# Discover some devices automatically
+discovery:
+
+mqtt: 
+  broker: 192.168.1.1
+  username: homeassistant
+  password: 
+  protocol: 3.1.1
+
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+#conversation:
+
+# Enables support for tracking state changes over time
+history:
+
+recorder:
+  purge_keep_days: 5
+# View all events in a logbook
+logbook:
+
+#mqtt:
+
+# Enables a map showing the location of tracked devices
+map:
+
+media_player:
+  - platform: cast        
+# Track the sun
+sun:
+
+# Weather
+weather:
+  - platform: openweathermap
+    api_key: 
+
+# Weather prediction
+sensor:
+  - platform: darksky
+    api_key: 
+    monitored_conditions:
+            - temperature
+            - humidity
+            - precip_probability
+            - precip_intensity
+            - wind_speed
+            - pressure
+            - wind_bearing
+            - apparent_temperature
+            - icon
+  - platform: moon
+  - platform: yr
+  - platform: time_date
+    display_options:
+      - 'time_date'
+  - platform: viaggiatreno
+    train_id: 35061
+    station_id: S00219
+  - platform: mqtt
+    state_topic: "fv/irms"
+    name: irms
+  - platform: mqtt
+    state_topic: /ESP0/sensore1/Temperature
+    name: Temp1
+  - platform: mqtt
+    state_topic: "fv/realpower"
+    name: fvrealpower
+  - platform: mqtt
+    state_topic: "fv/temp"
+    name: fvtemp  
+  - platform: mqtt
+    state_topic: /ESP0/sensore1/Humidity
+    name: Hum1
+  - platform: mqtt
+    state_topic: /ESP0/humG/Analog
+    name: humg  
+  - platform: mqtt
+    state_topic: /vigna/V
+    name: Vigna-V
+  - platform: mqtt
+    state_topic: /vigna/volt
+    name: Vigna-Volt
+  - platform: mqtt
+    state_topic: /vigna/soc
+    name: Vigna-Soc
+  - platform: mqtt
+    state_topic: /vigna/frValue
+    name: Vigna-frValue
+  - platform: mqtt
+    state_topic: /vigna/umi
+    name: Vigna-Umi
+  - platform: mqtt
+    state_topic: /vigna/temp
+    name: Vigna-Temp
+  - platform: mqtt
+    state_topic: /vigna/dew
+    name: Vigna-Dew
+  - platform: mqtt
+    state_topic: tele/sonoff/SENSOR
+    name: sonoffT
+    value_template: '{{ value_json["DHT11"]["Temperature"] }}'
+  - platform: mqtt
+    state_topic: tele/sonoffPOW/SENSOR
+    name: powPower
+    value_template: '{{ value_json["ENERGY"]["Power"] }}'
+  - platform: mqtt
+    state_topic: tele/sonoffPOW/SENSOR
+    name: powToday
+    value_template: '{{ value_json["ENERGY"]["Today"] }}'
+  - platform: mqtt
+    state_topic: tele/sonoffPOW/SENSOR
+    name: powYesterday
+    value_template: '{{ value_json["ENERGY"]["Yesterday"] }}'
+  - platform: mqtt
+    state_topic: tele/sonoffPOW/SENSOR
+    name: powTotal
+    value_template: '{{ value_json["ENERGY"]["Total"] }}'
+  - platform: mqtt
+    state_topic: tele/sonoffPOW2/SENSOR
+    name: powPower2
+    value_template: '{{ value_json["ENERGY"]["Power"] }}'
+  - platform: mqtt
+    state_topic: tele/sonoffPOW2/SENSOR
+    name: powToday2
+    value_template: '{{ value_json["ENERGY"]["Today"] }}'
+  - platform: mqtt
+    state_topic: tele/sonoffPOW2/SENSOR
+    name: powYesterday2
+    value_template: '{{ value_json["ENERGY"]["Yesterday"] }}'
+  - platform: mqtt
+    state_topic: tele/sonoffPOW2/SENSOR
+    name: powTotal2
+    value_template: '{{ value_json["ENERGY"]["Total"] }}'
+  - platform: waqi
+    token: 
+    locations:
+      - torino
+
+
+vacuum:
+  - platform: mqtt
+    name: "Roomba"
+    supported_features:
+      - stop
+      - return_home
+      - turn_on
+      - turn_off
+    command_topic: "/roomba/command"
+    payload_turn_on: "135"
+    payload_turn_off: "999"
+    payload_return_to_base: "143"
+    payload_stop: "999"
+    cleaning_template: "/roomba/state"
+
+switch:
+  - platform: mqtt
+    name: "Sonoff"
+    state_topic: "stat/sonoff/POWER"
+    command_topic: "cmnd/sonoff/power"
+    qos: 0
+    payload_on: "ON"
+    payload_off: "OFF"
+    optimistic: false
+    retain: true
+  - platform: mqtt
+    name: "SonoffPOWS"
+    state_topic: "stat/sonoffPOW/POWER"
+    command_topic: "cmnd/sonoffPOW/power"
+    qos: 0
+    payload_on: "ON"
+    payload_off: "OFF"
+    optimistic: false
+    retain: true
+  - platform: mqtt
+    name: "SonoffPOWS2"
+    state_topic: "stat/sonoffPOW2/POWER"
+    command_topic: "cmnd/sonoffPOW2/power"
+    qos: 0
+    payload_on: "ON"
+    payload_off: "OFF"
+    optimistic: false
+    retain: true    
+  - platform: mqtt
+    name: "led"
+    command_topic: "/ESP0/GPIO/0"
+    retain: true
+    payload_on: "1"
+    payload_off: "0"
+  - platform: mqtt
+    name: "relay1"
+    command_topic: "/ESP0/GPIO/12"
+    retain: true
+    payload_on: "1"
+    payload_off: "0"
+  - platform: mqtt
+    name: "relay2"
+    command_topic: "/ESP0/GPIO/13"
+    retain: true
+    payload_on: "1"
+    payload_off: "0"
+# Text to speech
+tts:
+  - platform: google
+
+
+climate:
+  - platform: honeywell
+    username: 
+    password: 
+    region: 'us'
+    sca_interval: 600
+
+    
+notify: 
+  - name: telegram
+    platform: telegram
+    api_key: 
+    chat_id: 
+
+telegram_bot:
+  platform: polling
+  api_key: 
+  allowed_chat_ids:
+    - 
+
+group: !include groups.yaml
+automation: !include_dir_list auto
+script: !include scripts.yaml
+
+
+
